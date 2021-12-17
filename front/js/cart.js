@@ -25,43 +25,61 @@ function concatKey() {
 //Affichage dans le dom
 function displayCart() {
   arrayToCart.forEach((cartProduct) => {
-    console.log(arrayToCart);
     const productId = cartProduct[0].idProduct;
     const productColor = cartProduct[0].colorProduct;
     const productImage = cartProduct[0].image;
     const productName = cartProduct[0].name;
     const productPrice = cartProduct[0].price;
-    const productQuantity = cartProduct[0].quantityProduct;
+    let productQuantity = cartProduct[0].quantityProduct;
 
     // Pour chaque contenu du localStorage
     CART__ITEMS.innerHTML += `<article class="cart__item" data-id="${productId}" data-color="${productColor}">
     <div class="cart__item__img">
-                  <img src="${productImage}">
-                  </div>
+    <img src="${productImage}">
+    </div>
                 <div class="cart__item__content">
-                  <div class="cart__item__content__description">
-                    <h2>${productName}</h2>
-                    <p>${productColor}</p>
-                    <p>${productPrice}€</p>
-                  </div>
-                  <div class="cart__item__content__settings">
-                    <div class="cart__item__content__settings__quantity">
-                      <p>Qté : </p>
-                      <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${productQuantity}">
-                    </div>
-                    <div class="cart__item__content__settings__delete">
-                      <p class="deleteItem">Supprimer</p>
-                    </div>
-                  </div>
-                  </div>
-                  </article>`;
+                <div class="cart__item__content__description">
+                <h2>${productName}</h2>
+                <p>${productColor}</p>
+                <p>${productPrice}€</p>
+                </div>
+                <div class="cart__item__content__settings">
+                <div class="cart__item__content__settings__quantity">
+                <p>Qté : </p>
+                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${productQuantity}">
+                </div>
+                <div class="cart__item__content__settings__delete">
+                <p class="deleteItem">Supprimer</p>
+                </div>
+                </div>
+                </div>
+                </article>`;
   });
-  const input = document.querySelector('input[type="number"]');
-  let newQty;
-  addQty();
-  function addQty() {
+}
+
+const inputs = document.querySelectorAll('input[type="number"]');
+addQty();
+function addQty() {
+  inputs.forEach((input, index) => {
     input.addEventListener("change", (e) => {
-      console.log(e.target.value);
+      // console.log(`${e.target.value} est à l'index ${index}`);
+      let newValue;
+      newValue = e.target.value;
+
+      let cart = localStorage.getItem(
+        arrayToCart[index][0].name + " " + arrayToCart[index][0].colorProduct
+      );
+
+      let newItem = cart.replace(
+        '"quantityProduct":' + arrayToCart[index][0].quantityProduct,
+        '"quantityProduct":' + newValue
+      );
+
+      localStorage.setItem(
+        arrayToCart[index][0].name + " " + arrayToCart[index][0].colorProduct,
+        newItem
+      );
+      console.log(cart);
     });
-  }
+  });
 }

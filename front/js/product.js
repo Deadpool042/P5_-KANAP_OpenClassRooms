@@ -72,6 +72,7 @@ function addCart(products) {
       (item) =>
         item.idProduct === id && item.colorProduct === COLOR_SELECT.value
     );
+
     if (cartNotEmpty) {
       //Si condition true alors ajout de la quantité en plus dans le localStorage
       let addQuantity =
