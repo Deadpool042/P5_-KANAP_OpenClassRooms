@@ -66,20 +66,22 @@ function addQty() {
       let newValue;
       newValue = e.target.value;
 
+      let keyNameLocalStorage = localStorage.key(index);
+      //Recuperation du nom de la clé
+
       let cart = localStorage.getItem(
         arrayToCart[index][0].name + " " + arrayToCart[index][0].colorProduct
       );
 
-      let newItem = cart.replace(
+      let getItem = localStorage.getItem(keyNameLocalStorage);
+
+      newItem = getItem.replace(
         '"quantityProduct":' + arrayToCart[index][0].quantityProduct,
         '"quantityProduct":' + newValue
       );
+      arrayToCart[index][0].quantityProduct = newValue;
 
-      localStorage.setItem(
-        arrayToCart[index][0].name + " " + arrayToCart[index][0].colorProduct,
-        newItem
-      );
-      console.log(cart);
+      console.log(localStorage.setItem(keyNameLocalStorage, newItem));
     });
   });
 }
