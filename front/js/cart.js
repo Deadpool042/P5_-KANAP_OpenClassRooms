@@ -1,13 +1,17 @@
 //Constante pour cibler les éléments
 const CART__ITEMS = document.getElementById("cart__items");
 const SELECT_ITEM = document.querySelector(".cart__item");
+const TOTAL_QUANTITY = document.getElementById("totalQuantity");
+const TOTAL_PRICE = document.getElementById("totalPrice");
 
 let keysFromStorage = [];
 let arrayToCart = [];
+let getTotal = [];
 
 getKeysFromStorage(); // Permet d'itérater le nom des clés du localStorage
 concatKey(); // Permet de concatener les clés avec la fonction localStorage.getItem
 displayCart(); // Affichage du panier dans le DOM
+
 function getKeysFromStorage() {
   for (let i = 0; i < localStorage.length; i++) {
     let keys = localStorage.key(i);
@@ -56,32 +60,47 @@ function displayCart() {
                 </article>`;
   });
 }
-
 const inputs = document.querySelectorAll('input[type="number"]');
 addQty();
 function addQty() {
   inputs.forEach((input, index) => {
     input.addEventListener("change", (e) => {
-      // console.log(`${e.target.value} est à l'index ${index}`);
       let newValue;
-      newValue = e.target.value;
+      newValue = e.target.value; //Nouvelle valeur de la quantité
 
-      let keyNameLocalStorage = localStorage.key(index);
       //Recuperation du nom de la clé
-
-      let cart = localStorage.getItem(
-        arrayToCart[index][0].name + " " + arrayToCart[index][0].colorProduct
-      );
+      let keyNameLocalStorage = localStorage.key(index);
 
       let getItem = localStorage.getItem(keyNameLocalStorage);
+      console.log(getItem);
+      //---------------------------- Methode pour mettre à jour la quantité par produit -------------------------------------------------------------//
+      // console.log(arrayToCart[0]);
+      let getQuantity = arrayToCart;
+      // console.log(getQuantity[index]);
+      let qtyFromCart = arrayToCart[index][0].quantityProduct; //Retourne le quantity issue du panier
+      //Cible le produit stocké dans le localStorage
+      let newQty = []; //Creation d'un nouveau tableau pour le localStorage
+      newQty.push(getQuantity[index].find((item) => item.quantityProduct == qtyFromCart));
+      arrayToCart[index][0].quantityProduct = newValue; //Mets à jour la quantité
 
-      newItem = getItem.replace(
-        '"quantityProduct":' + arrayToCart[index][0].quantityProduct,
-        '"quantityProduct":' + newValue
-      );
-      arrayToCart[index][0].quantityProduct = newValue;
-
-      console.log(localStorage.setItem(keyNameLocalStorage, newItem));
+      localStorage.setItem(keyNameLocalStorage, JSON.stringify(newQty));
     });
   });
+}
+totalQty(); //fonction pour calculer la quantité total des produits du panier
+function totalQty() {
+  let qty = [1, 4, 2, 1]; // Inserer quantityProduct depuis le localStorage
+
+  let result = qty.reduce((sum, current) => sum + current);
+
+  // console.log(result);
+}
+//Fonctions pre-établies pour les calculs
+totalPrice();
+function totalPrice() {
+  let qty = [4499, 1499, 1999, 1999]; // Inserer quantityProduct depuis le localStorage
+
+  let result = qty.reduce((sum, current) => sum + current);
+
+  // console.log(result);
 }
