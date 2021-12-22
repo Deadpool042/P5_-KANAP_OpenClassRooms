@@ -6,9 +6,11 @@ const TOTAL_PRICE = document.getElementById("totalPrice");
 
 let keysFromStorage = [];
 let arrayToCart = [];
-let getTotal = [];
+let productPrice = [];
+let totalPrice = [0];
+let result = []; //Pour afficher le prix initial
 
-getKeysFromStorage(); // Permet d'itérater le nom des clés du localStorage
+getKeysFromStorage(); // Permet d'itérer le nom des clés du localStorage
 concatKey(); // Permet de concatener les clés avec la fonction localStorage.getItem
 displayCart(); // Affichage du panier dans le DOM
 
@@ -59,48 +61,95 @@ function displayCart() {
                 </div>
                 </article>`;
   });
+  //------------------ Calcul prix total panier ---------------------------------/
+
+  // // console.log("resultat initial " + result);
 }
 const inputs = document.querySelectorAll('input[type="number"]');
 addQty();
+
+let newValue;
 function addQty() {
   inputs.forEach((input, index) => {
     input.addEventListener("change", (e) => {
-      let newValue;
+      let price = [];
       newValue = e.target.value; //Nouvelle valeur de la quantité
 
       //Recuperation du nom de la clé
       let keyNameLocalStorage = localStorage.key(index);
 
-      let getItem = localStorage.getItem(keyNameLocalStorage);
-      console.log(getItem);
       //---------------------------- Methode pour mettre à jour la quantité par produit -------------------------------------------------------------//
-      // console.log(arrayToCart[0]);
+
       let getQuantity = arrayToCart;
       // console.log(getQuantity[index]);
       let qtyFromCart = arrayToCart[index][0].quantityProduct; //Retourne le quantity issue du panier
       //Cible le produit stocké dans le localStorage
       let newQty = []; //Creation d'un nouveau tableau pour le localStorage
       newQty.push(getQuantity[index].find((item) => item.quantityProduct == qtyFromCart));
+
       arrayToCart[index][0].quantityProduct = newValue; //Mets à jour la quantité
 
       localStorage.setItem(keyNameLocalStorage, JSON.stringify(newQty));
+      //---------------------------- Methode pour mettre à jour le prix par produit -------------------------------------------------------------//
+      for (i = 0; i < arrayToCart.length; i++) {
+        price.push(Number(arrayToCart[i][0].price * Number(arrayToCart[i][0].quantityProduct)));
+      }
+
+      result = price.reduce((sum, current) => sum + current);
+
+      TOTAL_PRICE.innerText = result;
     });
   });
+  totalQty();
 }
-totalQty(); //fonction pour calculer la quantité total des produits du panier
+//Fonction pour modifier le prix en temps réel
+calcPrice();
+function calcPrice() {
+  for (i = 0; i < arrayToCart.length; i++) {
+    totalPrice.push(Number(arrayToCart[i][0].price * Number(arrayToCart[i][0].quantityProduct)));
+  }
+  if (arrayToCart !== null) {
+    result = totalPrice.reduce((sum, current) => sum + current);
+  } else {
+    result = 0;
+  }
+
+  TOTAL_PRICE.innerText = result;
+}
+
+//fonction pour calculer la quantité total des produits du panier
 function totalQty() {
-  let qty = [1, 4, 2, 1]; // Inserer quantityProduct depuis le localStorage
+  let totQty = [0];
+  for (i = 0; i < arrayToCart.length; i++) {
+    // console.log(arrayToCart[i][0].quantityProduct);
+    totQty.push(Number(arrayToCart[i][0].quantityProduct));
+  }
 
-  let result = qty.reduce((sum, current) => sum + current);
+  //  Inserer quantityProduct depuis le localStorage
 
-  // console.log(result);
+  let result = totQty.reduce((sum, current) => sum + current);
+
+  if (arrayToCart !== null) {
+    result = totQty.reduce((sum, current) => sum + current);
+  } else {
+    result = 0;
+  }
+
+  TOTAL_QUANTITY.innerText = result;
 }
-//Fonctions pre-établies pour les calculs
-totalPrice();
-function totalPrice() {
-  let qty = [4499, 1499, 1999, 1999]; // Inserer quantityProduct depuis le localStorage
 
-  let result = qty.reduce((sum, current) => sum + current);
+const DELETE_ITEMS = document.querySelectorAll(".deleteItem");
 
-  // console.log(result);
+deleteItem();
+function deleteItem() {
+  DELETE_ITEMS.forEach((input, index) => {
+    input.addEventListener("click", (e) => {
+      let color = arrayToCart[index][0].colorProduct;
+      let name = arrayToCart[index][0].name;
+      localStorage.removeItem(name + " " + color);
+
+      //Recharge la page pour reactualiser le panier
+      location.reload();
+    });
+  });
 }

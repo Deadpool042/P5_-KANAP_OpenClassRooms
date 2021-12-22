@@ -42,12 +42,12 @@ function displayDom(products) {
 }
 
 //Au clic sur le bouton, il demarre la fonction addCart
-function btnAddToCart(products) {
+function btnAddToCart() {
   const ADD_TO_CART = document.getElementById("addToCart");
   ADD_TO_CART.addEventListener("click", addCart);
 }
 //addCart permet ,au clic,de creer un objet par produit avec les données issu de l'API
-function addCart(products) {
+function addCart() {
   let productItem = {
     idProduct: id,
     colorProduct: COLOR_SELECT.value,
@@ -60,36 +60,24 @@ function addCart(products) {
   };
 
   //Gestion du localeStorage
-  let arrayToCart = JSON.parse(
-    localStorage.getItem(productItem.name + " " + productItem.colorProduct)
-  );
-  console.table(arrayToCart);
+  //Si le storage est vide alors push le 1er panier
+
+  arrayToCart = JSON.parse(localStorage.getItem(productItem.name + " " + productItem.colorProduct));
 
   if (arrayToCart !== null) {
     // Si le storage n'est pas vide
     // Variable comprenant la condition de couleur et id identique
-    let cartNotEmpty = arrayToCart.find(
-      (item) =>
-        item.idProduct === id && item.colorProduct === COLOR_SELECT.value
-    );
+    let cartNotEmpty = arrayToCart.find((item) => item.idProduct === id && item.colorProduct === COLOR_SELECT.value);
 
     if (cartNotEmpty) {
       //Si condition true alors ajout de la quantité en plus dans le localStorage
-      let addQuantity =
-        productItem.quantityProduct + cartNotEmpty.quantityProduct;
+      let addQuantity = productItem.quantityProduct + cartNotEmpty.quantityProduct;
       cartNotEmpty.quantityProduct = addQuantity;
-      localStorage.setItem(
-        productItem.name + " " + productItem.colorProduct,
-        JSON.stringify(arrayToCart)
-      );
+      localStorage.setItem(productItem.name + " " + productItem.colorProduct, JSON.stringify(arrayToCart));
     }
   } else {
-    //Si le storage est vide alors push le 1er panier
-    arrayToCart = [];
+    let arrayToCart = [];
     arrayToCart.push(productItem);
-    localStorage.setItem(
-      productItem.name + " " + productItem.colorProduct,
-      JSON.stringify(arrayToCart)
-    );
+    localStorage.setItem(productItem.name + " " + productItem.colorProduct, JSON.stringify(arrayToCart));
   }
 }
