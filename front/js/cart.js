@@ -65,12 +65,12 @@ function displayCart() {
 
   // // console.log("resultat initial " + result);
 }
-const inputs = document.querySelectorAll('input[type="number"]');
 addQty();
 
-let newValue;
 function addQty() {
-  inputs.forEach((input, index) => {
+  let newValue;
+  const INPUTS = document.querySelectorAll('input[type="number"]');
+  INPUTS.forEach((input, index) => {
     input.addEventListener("change", (e) => {
       let price = [];
       newValue = e.target.value; //Nouvelle valeur de la quantité
@@ -137,11 +137,9 @@ function totalQty() {
 
   TOTAL_QUANTITY.innerText = result;
 }
-
-const DELETE_ITEMS = document.querySelectorAll(".deleteItem");
-
-deleteItem();
+deleteItem(); // Suppression élément du panier
 function deleteItem() {
+  const DELETE_ITEMS = document.querySelectorAll(".deleteItem");
   DELETE_ITEMS.forEach((input, index) => {
     input.addEventListener("click", (e) => {
       let color = arrayToCart[index][0].colorProduct;
@@ -153,3 +151,126 @@ function deleteItem() {
     });
   });
 }
+
+//------------------------- GESTION DU FORMULAIRE ---------------------------//
+
+// selectionne les inputs de type text ET de type password
+const FORM_INPUTS = document.querySelectorAll('input[type="text"], input[type="email"]');
+
+const FORM = document.querySelector("form");
+//pour selectionner le formulaire afin de pouvoir l'envoyer
+
+const REGEX_MAIL = /^[\w_-]+@[\w-]+\.[a-z]{2,4}$/i;
+const REGEX_NAME = /^[a-z ,.'-]+$/i;
+const REGEX_ADRESS = /^[a-zA-Z0-9\s\,\''\-]*$/i;
+const REGEX_CITY = /^[[:alpha:]]([-' ]?[[:alpha:]])*$/i;
+
+let firstName, lastName, adress, city, email; // pour stocker les valeurs des saisis
+
+//Afin d'éviter de repeter le code:
+// 3 parametres: -tag pour le champ (pseudo / email / password /confirm)
+//-message pour le message d'erreur à afficher sous le champ
+//-valid (boulean) pour le message à afficher sous le champ
+//Affichage des messages d'erreurs
+const ERROR_DISPLAY = (tag, message, valid) => {
+  const ERROR = document.querySelector("#" + tag + "ErrorMsg");
+  // ciblage dynamique des classes pour sélectionner la classe recherchée.
+  // concatène pour avoir juste le tag appeler. Par ex en mettant firstName dans
+  // le paramètre "tag", ca donnera "#firstNameErrorMsg"
+
+  if (!valid) {
+    // Si valid est a false
+
+    ERROR.textContent = message; // ajout du message renseigné dans le paramètre
+    // "message" de la constante "errorDisplay"
+  } else {
+    //sinon
+
+    ERROR.textContent = message; // ajout du message renseigné dans le paramètre
+    // "message" de la constante "errorDisplay
+  }
+};
+
+//Vérification du prénom
+const FIRSTNAME_CHECKER = (value) => {
+  if (!value.match(REGEX_NAME)) {
+    // verifie si l'email est valide
+    ERROR_DISPLAY("firstName", "Le prénom n'est pas valide");
+    firstName = null;
+  } else {
+    ERROR_DISPLAY("firstName", "", true); // si il est valide , remove le span d'erreur
+    firstName = value;
+  }
+};
+//Vérification du nom
+const LASTNAME_CHECKER = (value) => {
+  if (!value.match(REGEX_NAME)) {
+    // verifie si l'email est valide
+    ERROR_DISPLAY("lastName", "Le nom n'est pas valide");
+    lastName = null;
+  } else {
+    ERROR_DISPLAY("lastName", "", true); // si il est valide , remove le span d'erreur
+    lastName = value;
+  }
+};
+//Vérification de l'adresse
+const ADRESS_CHECKER = (value) => {
+  if (!value.match(REGEX_ADRESS)) {
+    // verifie si l'email est valide
+    ERROR_DISPLAY("address", "L'adresse n'est pas valide");
+    address = null;
+  } else {
+    ERROR_DISPLAY("address", "", true); // si il est valide , remove le span d'erreur
+    address = value;
+  }
+};
+//Vérification de la ville
+const CITY_CHECKER = (value) => {
+  if (!value.match(REGEX_NAME)) {
+    // verifie si l'email est valide
+    ERROR_DISPLAY("city", "La ville n'est pas valide");
+    city = null;
+  } else {
+    ERROR_DISPLAY("city", "", true); // si il est valide , remove le span d'erreur
+    city = value;
+  }
+};
+//Vérification de l'email
+const EMAIL_CHECKER = (value) => {
+  if (!value.match(REGEX_MAIL)) {
+    // verifie si l'email est valide
+    ERROR_DISPLAY("email", "Le mail n'est pas valide");
+    email = null;
+  } else {
+    ERROR_DISPLAY("email", "", true); // si il est valide , remove le span d'erreur
+    email = value;
+  }
+};
+
+//For chaque actions sur les inputs , il renvoit la valeur l'input sur l'id qui est concerné.
+FORM_INPUTS.forEach((input) => {
+  input.addEventListener("input", (e) => {
+    switch (e.target.id) {
+      case "firstName":
+        FIRSTNAME_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'imput
+        break;
+
+      case "lastName":
+        LASTNAME_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'imput
+        break;
+
+      case "address":
+        ADRESS_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'imput
+        break;
+
+      case "city":
+        CITY_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'imput
+        break;
+      case "email":
+        EMAIL_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'imput
+        break;
+      default:
+        null;
+    }
+  });
+});
