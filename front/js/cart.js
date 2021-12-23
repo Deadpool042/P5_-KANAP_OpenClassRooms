@@ -274,3 +274,78 @@ FORM_INPUTS.forEach((input) => {
     }
   });
 });
+
+//---------------- Envoi du formulaire ------------------//
+
+/**
+ *
+ * Expects request to contain:
+ * contact: {
+ *   firstName: string,
+ *   lastName: string,
+ *   address: string,
+ *   city: string,
+ *   email: string
+ * }
+ * products: [string] <-- array of product _id
+ *
+ */
+// products: [string] <-- array of product _id
+
+//Creation du tableau par ID
+FORM.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  //Stockage des infos clients
+  let contact = {
+    firstName: firstName,
+    lastName: lastName,
+    address: address,
+    city: city,
+    email: email,
+  };
+
+  //Création d'un tableau pour l'envoi
+  let products = [];
+  for (id of arrayToCart) {
+    products.push(id[0].idProduct);
+  }
+  console.log(products);
+
+  let articleOrder = { contact, products };
+  console.log(articleOrder);
+  //Envoi de la requete
+
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+      "content-Type": "application/json",
+    },
+    body: JSON.stringify(articleOrder),
+  })
+    //Reponse depuis l'API
+    .then((response) => {
+      return response.json();
+    })
+    //Recuperation des données,affichage des données et redirection vers page confiramtion
+    .then((data) => {
+      console.log(data.orderId);
+      document.location.href = `confirmation.html?orderId=${data.orderId}`;
+
+      //Effacement du localStorage
+      localStorage.clear();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  FORM_INPUTS.forEach((input) => (input.value = "")); //Remise à zéro des champs
+
+  //Remise à zéro du contact envoyé
+
+  firstName = null;
+  lastName = null;
+  address = null;
+  city = null;
+  email = null;
+});
