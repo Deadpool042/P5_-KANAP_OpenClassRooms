@@ -276,6 +276,7 @@ FORM_INPUTS.forEach((input) => {
 });
 
 //---------------- Envoi du formulaire ------------------//
+//vérification du remplissage du formulaire
 
 /**
  *
@@ -292,60 +293,58 @@ FORM_INPUTS.forEach((input) => {
  */
 // products: [string] <-- array of product _id
 
+//Envoi de la requete
 //Creation du tableau par ID
-FORM.addEventListener("submit", (e) => {
-  e.preventDefault();
 
-  //Stockage des infos clients
-  let contact = {
-    firstName: firstName,
-    lastName: lastName,
-    address: address,
-    city: city,
-    email: email,
-  };
+function sendForm() {
+  FORM.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-  //Création d'un tableau pour l'envoi
-  let products = [];
-  for (id of arrayToCart) {
-    products.push(id[0].idProduct);
-  }
-  console.log(products);
+    //Stockage des infos clients
+    let contact = {
+      firstName: firstName,
+      lastName: lastName,
+      address: address,
+      city: city,
+      email: email,
+    };
+    //Vérification de la saisie du formulaire avant d'envoyer
+    if (firstName == null || lastName == null || address == null || city == null || email == null) {
+      window.confirm("Veuillez renseigner les champs manquants");
+      window.onbeforeunload; //Empeche le rechargement de la page
+    } else {
+      //Création d'un tableau pour l'envoi
+      let products = [];
+      for (id of arrayToCart) {
+        products.push(id[0].idProduct);
+      }
 
-  let articleOrder = { contact, products };
-  console.log(articleOrder);
-  //Envoi de la requete
+      let articleOrder = { contact, products };
 
-  fetch("http://localhost:3000/api/products/order", {
-    method: "POST",
-    headers: {
-      "content-Type": "application/json",
-    },
-    body: JSON.stringify(articleOrder),
-  })
-    //Reponse depuis l'API
-    .then((response) => {
-      return response.json();
-    })
-    //Recuperation des données,affichage des données et redirection vers page confiramtion
-    .then((data) => {
-      console.log(data.orderId);
-      document.location.href = `confirmation.html?orderId=${data.orderId}`;
+      fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        headers: {
+          "content-Type": "application/json",
+        },
+        body: JSON.stringify(articleOrder),
+      })
+        //Reponse depuis l'API
+        .then((response) => {
+          return response.json();
+        })
+        //Recuperation des données,affichage des données et redirection vers page confiramtion
+        .then((data) => {
+          document.location.href = `confirmation.html?orderId=${data.orderId}`;
 
-      //Effacement du localStorage
-      localStorage.clear();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+          //Effacement du localStorage
+          localStorage.clear();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
-  FORM_INPUTS.forEach((input) => (input.value = "")); //Remise à zéro des champs
-
-  //Remise à zéro du contact envoyé
-
-  firstName = null;
-  lastName = null;
-  address = null;
-  city = null;
-  email = null;
-});
+      FORM_INPUTS.forEach((input) => (input.value = "")); //Remise à zéro des champs
+    }
+  });
+}
+sendForm();
