@@ -179,59 +179,55 @@ const ERROR_DISPLAY = (tag, message, valid) => {
   // le paramètre "tag", ca donnera "#firstNameErrorMsg"
 
   if (!valid) {
-    // Si valid est a false
-
-    ERROR.textContent = message; // ajout du message renseigné dans le paramètre
+    ERROR.textContent = message; // si valid est false ajout du message renseigné dans le paramètre de la fonction ERROR_DISPLAY
     // "message" de la constante "errorDisplay"
   } else {
     //sinon
-
-    ERROR.textContent = message; // ajout du message renseigné dans le paramètre
-    // "message" de la constante "errorDisplay
+    ERROR.textContent = message; // si valid est false est true pas de message d'erreur
   }
 };
 
 //Vérification du prénom
 const FIRSTNAME_CHECKER = (value) => {
   if (!value.match(REGEX_NAME)) {
-    // verifie si l'email est valide
+    // verifie si le prénom est valide
     ERROR_DISPLAY("firstName", "Le prénom n'est pas valide");
     firstName = null;
   } else {
-    ERROR_DISPLAY("firstName", "", true); // si il est valide , remove le span d'erreur
+    ERROR_DISPLAY("firstName", "", true); //
     firstName = value;
   }
 };
 //Vérification du nom
 const LASTNAME_CHECKER = (value) => {
   if (!value.match(REGEX_NAME)) {
-    // verifie si l'email est valide
+    // verifie si le nom est valide
     ERROR_DISPLAY("lastName", "Le nom n'est pas valide");
     lastName = null;
   } else {
-    ERROR_DISPLAY("lastName", "", true); // si il est valide , remove le span d'erreur
+    ERROR_DISPLAY("lastName", "", true);
     lastName = value;
   }
 };
 //Vérification de l'adresse
 const ADRESS_CHECKER = (value) => {
   if (!value.match(REGEX_ADRESS)) {
-    // verifie si l'email est valide
+    // verifie si l'adresse est valide
     ERROR_DISPLAY("address", "L'adresse n'est pas valide");
     address = null;
   } else {
-    ERROR_DISPLAY("address", "", true); // si il est valide , remove le span d'erreur
+    ERROR_DISPLAY("address", "", true);
     address = value;
   }
 };
 //Vérification de la ville
 const CITY_CHECKER = (value) => {
   if (!value.match(REGEX_NAME)) {
-    // verifie si l'email est valide
+    // verifie si la ville est valide
     ERROR_DISPLAY("city", "La ville n'est pas valide");
     city = null;
   } else {
-    ERROR_DISPLAY("city", "", true); // si il est valide , remove le span d'erreur
+    ERROR_DISPLAY("city", "", true);
     city = value;
   }
 };
@@ -242,7 +238,7 @@ const EMAIL_CHECKER = (value) => {
     ERROR_DISPLAY("email", "Le mail n'est pas valide");
     email = null;
   } else {
-    ERROR_DISPLAY("email", "", true); // si il est valide , remove le span d'erreur
+    ERROR_DISPLAY("email", "", true);
     email = value;
   }
 };
@@ -252,22 +248,22 @@ FORM_INPUTS.forEach((input) => {
   input.addEventListener("input", (e) => {
     switch (e.target.id) {
       case "firstName":
-        FIRSTNAME_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'imput
+        FIRSTNAME_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'input
         break;
 
       case "lastName":
-        LASTNAME_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'imput
+        LASTNAME_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'input
         break;
 
       case "address":
-        ADRESS_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'imput
+        ADRESS_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'input
         break;
 
       case "city":
-        CITY_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'imput
+        CITY_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'input
         break;
       case "email":
-        EMAIL_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'imput
+        EMAIL_CHECKER(e.target.value); //e.target.value permet de recuperer les valeurs entrées dans l'input
         break;
       default:
         null;
@@ -295,7 +291,8 @@ FORM_INPUTS.forEach((input) => {
 
 //Envoi de la requete
 //Creation du tableau par ID
-
+console.log(keysFromStorage.length);
+console.log(keysFromStorage);
 function sendForm() {
   FORM.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -312,6 +309,12 @@ function sendForm() {
     if (firstName == null || lastName == null || address == null || city == null || email == null) {
       window.confirm("Veuillez renseigner les champs manquants");
       window.onbeforeunload; //Empeche le rechargement de la page
+    } else if (keysFromStorage.length === 0) {
+      // Si le panier est vide alors un message d'erreur est affiché
+      let container = document.createElement("span");
+      let errorMsg = document.createTextNode("Panier vide ! Veuillez ajouter des articles");
+      CART__ITEMS.prepend(container);
+      CART__ITEMS.append(errorMsg);
     } else {
       //Création d'un tableau pour l'envoi
       let products = [];
