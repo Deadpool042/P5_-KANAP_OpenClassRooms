@@ -48,36 +48,42 @@ function btnAddToCart() {
 }
 //addCart permet ,au clic,de creer un objet par produit avec les données issu de l'API
 function addCart() {
-  let productItem = {
-    idProduct: id,
-    colorProduct: COLOR_SELECT.value,
-    quantityProduct: Number(QUANTITY.value),
-    name: TITLE.innerText,
-    price: PRICE.innerText,
-    description: DESCRIPTION.innerText,
-    image: document.querySelector(".item__img img").src,
-    altImage: document.querySelector(".item__img img").alt,
-  };
+  //Verifie que la quantité et la couleur soit correctement saisi
+  if (QUANTITY.value == 0 || QUANTITY.value > 100) {
+    alert("Veuillez selectionner une quantité entre 1 et 100");
+  } else if (COLOR_SELECT.value === "") {
+    alert("Veuillez choisir une couleur");
+  } else {
+    let productItem = {
+      idProduct: id,
+      colorProduct: COLOR_SELECT.value,
+      quantityProduct: Number(QUANTITY.value),
+      name: TITLE.innerText,
+      price: PRICE.innerText,
+      description: DESCRIPTION.innerText,
+      image: document.querySelector(".item__img img").src,
+      altImage: document.querySelector(".item__img img").alt,
+    };
 
-  //Gestion du localeStorage
-  //Si le storage est vide alors push le 1er panier
+    //Gestion du localeStorage
+    //Si le storage est vide alors push le 1er panier
+    arrayToCart = JSON.parse(localStorage.getItem(productItem.name + " " + productItem.colorProduct));
 
-  arrayToCart = JSON.parse(localStorage.getItem(productItem.name + " " + productItem.colorProduct));
+    if (arrayToCart !== null) {
+      // Si le storage n'est pas vide
+      // Variable comprenant la condition de couleur et id identique
+      let cartNotEmpty = arrayToCart.find((item) => item.idProduct === id && item.colorProduct === COLOR_SELECT.value);
 
-  if (arrayToCart !== null) {
-    // Si le storage n'est pas vide
-    // Variable comprenant la condition de couleur et id identique
-    let cartNotEmpty = arrayToCart.find((item) => item.idProduct === id && item.colorProduct === COLOR_SELECT.value);
-
-    if (cartNotEmpty) {
-      //Si condition true alors ajout de la quantité en plus dans le localStorage
-      let addQuantity = productItem.quantityProduct + cartNotEmpty.quantityProduct;
-      cartNotEmpty.quantityProduct = addQuantity;
+      if (cartNotEmpty) {
+        //Si condition true alors ajout de la quantité en plus dans le localStorage
+        let addQuantity = productItem.quantityProduct + cartNotEmpty.quantityProduct;
+        cartNotEmpty.quantityProduct = addQuantity;
+        localStorage.setItem(productItem.name + " " + productItem.colorProduct, JSON.stringify(arrayToCart));
+      }
+    } else {
+      let arrayToCart = [];
+      arrayToCart.push(productItem);
       localStorage.setItem(productItem.name + " " + productItem.colorProduct, JSON.stringify(arrayToCart));
     }
-  } else {
-    let arrayToCart = [];
-    arrayToCart.push(productItem);
-    localStorage.setItem(productItem.name + " " + productItem.colorProduct, JSON.stringify(arrayToCart));
   }
 }
